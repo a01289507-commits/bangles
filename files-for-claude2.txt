@@ -1,0 +1,116 @@
+﻿=== play-button.tsx ===
+/** @jsxImportSource react */
+
+import { PlayButton as PlayButtonPrimitive } from '@videojs/react';
+import {
+  RestartIcon as RestartIconPrimitive,
+  PlayIcon as PlayIconPrimitive,
+  PauseIcon as PauseIconPrimitive,
+} from '@videojs/react/icons/scaffold';
+import type { ClassValue } from 'cn';
+
+import { cn, resolveClassName } from '@/lib/resolve-class-name';
+
+import { Button } from './button';
+import { ButtonTooltip } from './tooltip';
+import { BufferingIndicator } from './video-feedback';
+
+export function PlayButton({
+  className,
+  iconClassName,
+  tooltip = true,
+  ...props
+}: PlayButtonPrimitive.Props & { iconClassName?: ClassValue; tooltip?: boolean } = {}) {
+  return (
+    <ButtonTooltip disabled={!tooltip}>
+      <PlayButtonPrimitive
+        render={<Button />}
+        className={(state) => cn('group/play', resolveClassName(className, state))}
+        {...props}
+      >
+        <RestartIconPrimitive
+          className={cn('col-start-1 row-start-1 hidden size-4.5', 'group-data-ended/play:block', iconClassName)}
+        />
+        <PlayIconPrimitive
+          className={cn(
+            'col-start-1 row-start-1 hidden size-4.5',
+            'group-not-data-ended/play:group-data-paused/play:block',
+            'group-not-data-ended/play:group-not-data-started/play:block',
+            iconClassName
+          )}
+        />
+        <PauseIconPrimitive
+          className={cn(
+            'col-start-1 row-start-1 hidden size-4.5',
+            'group-data-started/play:group-not-data-paused/play:group-not-data-ended/play:block',
+            iconClassName
+          )}
+        />
+      </PlayButtonPrimitive>
+    </ButtonTooltip>
+  );
+}
+
+export function AudioPlayButton() {
+  return (
+    <div className={'relative inline-flex'}>
+      <PlayButton />
+      <BufferingIndicator className={'z-20 bg-media-background'} />
+    </div>
+  );
+}
+
+=== seek-button.tsx ===
+/** @jsxImportSource react */
+
+import { SeekButton as SeekButtonPrimitive } from '@videojs/react';
+import { SeekIcon as SeekIconPrimitive } from '@videojs/react/icons/scaffold';
+import type { ClassValue } from 'cn';
+
+import { cn, resolveClassName } from '@/lib/resolve-class-name';
+
+import { Button } from './button';
+import { ButtonTooltip } from './tooltip';
+
+/**
+ * Skips playback by a fixed amount. `seconds` has to match the arrow-key hotkey the skin registers, or the engine will
+ * not mirror `aria-keyshortcuts` onto the button.
+ */
+export function SeekButton({
+  className,
+  iconClassName,
+  seconds,
+  tooltip = true,
+}: {
+  className?: ClassValue;
+  iconClassName?: ClassValue;
+  seconds: number;
+  tooltip?: boolean;
+}) {
+  const backward = seconds < 0;
+
+  return (
+    <ButtonTooltip disabled={!tooltip}>
+      <SeekButtonPrimitive
+        render={<Button />}
+        className={(state) => cn(resolveClassName(className, state))}
+        seconds={seconds}
+      >
+        <div className={'relative grid'}>
+          <SeekIconPrimitive
+            className={cn('col-start-1 row-start-1 size-4.5', backward && 'transform-[scaleX(-1)]', iconClassName)}
+          />
+          <span
+            className={cn(
+              'absolute bottom-[calc(var(--media-spacing)*-0.75)] text-[calc(var(--media-spacing)*2.25)] tabular-nums',
+              backward ? '-left-px' : '-right-px'
+            )}
+          >
+            {Math.abs(seconds)}
+          </span>
+        </div>
+      </SeekButtonPrimitive>
+    </ButtonTooltip>
+  );
+}
+

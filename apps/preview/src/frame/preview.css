@@ -1,0 +1,68 @@
+/* The page around the player in the preview frame. Your skin lives in the project's src/ folder. */
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  background: transparent !important;
+  overflow-x: hidden;
+}
+
+/* Center the player in the frame, and let the frame scroll only if the player is taller than it. */
+#root {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 24px;
+}
+@media (max-width: 640px) {
+  #root {
+    padding: 8px;
+    place-items: center;
+  }
+
+  .preview-player {
+    max-width: 100%;
+  }
+}
+
+.preview-player {
+  width: 100%;
+  max-width: var(--preview-player-width, 56rem);
+}
+
+/* The aspect ratio option overrides the skin's own; `auto` lets the media's intrinsic size decide. */
+.preview-player[style*="--preview-player-ratio"] .media-skin {
+  aspect-ratio: var(--preview-player-ratio);
+}
+
+/* Player elements only provide state; the skin inside them is the box that gets sized. */
+media-i18n,
+video-player,
+live-video-player,
+audio-player,
+live-audio-player {
+  display: contents;
+}
+
+/* soft glow so the player floats over the 3D bangles */
+.preview-player .media-skin {
+  box-shadow: 0 20px 60px rgb(0 0 0 / 0.55);
+}
+.media-skin[data-theme='scaffold'] {
+  border-radius: 28px !important;
+}
+.media-skin[data-theme='scaffold']::after {
+  border-radius: 28px;
+  box-shadow:
+    inset 0 0 0 3px var(--bangle-gold),
+    inset 0 0 0 6px var(--b4),
+    inset 0 0 40px rgb(255 200 87 / 0.25);
+}
+.preview-player .media-skin {
+  box-shadow: 0 0 40px rgb(255 77 157 / 0.35), 0 20px 60px rgb(0 0 0 / 0.55);
+}
